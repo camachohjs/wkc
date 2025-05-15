@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -20,7 +20,7 @@ namespace LaravelLang\Publisher\Concerns;
 use Composer\InstalledVersions;
 use DragonCode\Support\Facades\Helpers\Arr;
 use Illuminate\Foundation\Console\AboutCommand;
-use LaravelLang\Locales\Enums\Config;
+use LaravelLang\Config\Facades\Config;
 
 trait About
 {
@@ -40,7 +40,7 @@ trait About
 
     protected function getPackages(): array
     {
-        return Arr::of(config(Config::PrivateKey() . '.packages'))
+        return Arr::of(Config::hidden()->packages->all())
             ->renameKeys(static fn (mixed $key, array $values) => $values['class'])
             ->map(fn (array $values) => $this->getPackageVersion($values['name']))
             ->toArray();

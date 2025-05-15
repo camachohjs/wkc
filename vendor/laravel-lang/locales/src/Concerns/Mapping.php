@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace LaravelLang\Locales\Concerns;
 
 use Illuminate\Support\Collection;
+use LaravelLang\Config\Facades\Config;
 use LaravelLang\LocaleList\Locale as LocaleEnum;
 use LaravelLang\Locales\Data\LocaleData;
-use LaravelLang\Locales\Enums\Config;
 
 trait Mapping
 {
@@ -53,6 +53,6 @@ trait Mapping
 
     protected function mapData(LocaleEnum $locale): array
     {
-        return config(Config::PrivateKey() . '.map.' . $locale->value);
+        return Config::hidden()->map->get($locale);
     }
 }

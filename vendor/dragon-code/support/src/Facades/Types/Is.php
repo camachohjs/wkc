@@ -8,7 +8,7 @@
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -26,6 +26,7 @@ use DragonCode\Support\Types\Is as Helper;
  * @method static bool doesntEmpty($value)
  * @method static bool error($value)
  * @method static bool isEmpty($value)
+ * @method static bool isNotEmpty($value)
  * @method static bool object($value)
  * @method static bool reflectionClass($value)
  * @method static bool string($value)

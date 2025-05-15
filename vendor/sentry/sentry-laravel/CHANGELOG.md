@@ -1,5 +1,85 @@
 # Changelog
 
+## 4.13.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.13.0.
+
+### Features
+
+- Add support for Laravel 12.0 [(#980)](https://github.com/getsentry/sentry-laravel/pull/980)
+
+## 4.12.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.12.0.
+
+### Features
+
+- Improve generation of slug for scheduled job cron monitoring [(#977)](https://github.com/getsentry/sentry-laravel/pull/977)
+
+  For scheduled jobs it's no longer needed to manually provide a slug to the [`->sentryMonitor()`](https://docs.sentry.io/platforms/php/guides/laravel/crons/#job-monitoring) call, it will be derived from the job class name.
+
+### Bug Fixes
+
+- Fix unable to parse notifiable [(#974)](https://github.com/getsentry/sentry-laravel/pull/974)
+- Fix triggering a missing attribute violation [(#978)](https://github.com/getsentry/sentry-laravel/pull/978)
+
+### Misc
+
+- Disable scheduled task tracing for backgrounded tasks [(#975)](https://github.com/getsentry/sentry-laravel/pull/975)
+
+  Backgrounded tasks show up a ~1ms transactions right now because we are effectively monitoring the time it takes to start the background process instead of the execution.
+  We are [working on a solution](https://github.com/getsentry/sentry-laravel/pull/976) to this problem, but in the meantime, we are disabling the monitoring of backgrounded tasks (that was introduces in 4.11.0).
+
+## 4.11.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.11.0.
+
+### Features
+
+- Add Scheduled Task Tracing [(#968)](https://github.com/getsentry/sentry-laravel/pull/968)
+
+### Bug Fixes
+
+- Fix retry count for queued jobs [(#967)](https://github.com/getsentry/sentry-laravel/pull/967)
+
+## 4.10.2
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.10.2.
+
+### Bug Fixes
+
+- Fixed a PHP 8.4 deprecation notice when running `php artisan sentry:test` [(#963)](https://github.com/getsentry/sentry-laravel/pull/963)
+
+## 4.10.1
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.10.1.
+
+### Bug Fixes
+
+- Fixed a PHP 8.4 deprecation notice [(#954)](https://github.com/getsentry/sentry-laravel/pull/954)
+
+## 4.10.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.10.0.
+
+### Features
+
+- The SDK was updated to support PHP 8.4 [(#952)](https://github.com/getsentry/sentry-laravel/pull/952)
+
+### Misc
+
+- The SDK does no longer emit Metrics. All public Metrics APIs are now no-op, internal APIs were removed [(#951)](https://github.com/getsentry/sentry-laravel/pull/951)
+
+## 4.9.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.9.0.
+
+### Misc
+
+- Allow the cache store used by the console scheduling integration to be overridden [(#942)](https://github.com/getsentry/sentry-laravel/pull/942)
+
+- Set `http` breadcrumb levels based on response code [(#940)](https://github.com/getsentry/sentry-laravel/pull/940)
+
 ## 4.8.0
 
 The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.8.0.

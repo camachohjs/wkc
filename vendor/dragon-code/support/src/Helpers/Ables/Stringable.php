@@ -8,7 +8,7 @@
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -22,7 +22,6 @@ use DragonCode\Support\Concerns\Dumpable;
 use DragonCode\Support\Facades\Helpers\Arr;
 use DragonCode\Support\Facades\Helpers\Str;
 use DragonCode\Support\Facades\Instances\Call;
-use JetBrains\PhpStorm\Pure;
 
 class Stringable implements Contract
 {
@@ -66,7 +65,6 @@ class Stringable implements Contract
     /**
      * Split a string by a string.
      */
-    #[Pure]
     public function explode(string $separator, ?string $map_into = null): Arrayable
     {
         $array = Arr::of(explode($separator, $this->toString()));
@@ -296,7 +294,6 @@ class Stringable implements Contract
     /**
      * Get the portion of a string between two given values.
      */
-    #[Pure]
     public function between(mixed $from, mixed $to, bool $trim = true): self
     {
         return new self(Str::between($this->toString(), $from, $to, $trim));
@@ -387,10 +384,21 @@ class Stringable implements Contract
     }
 
     /**
-     * Determines if the value is doesn't empty.
+     * Determines if the value doesn't empty.
+     *
+     * @deprecated
+     * @see self::isNotEmpty()
      */
     public function doesntEmpty(): bool
     {
         return Str::doesntEmpty($this->value);
+    }
+
+    /**
+     * Determines if the value isn't empty.
+     */
+    public function isNotEmpty(): bool
+    {
+        return Str::isNotEmpty($this->value);
     }
 }

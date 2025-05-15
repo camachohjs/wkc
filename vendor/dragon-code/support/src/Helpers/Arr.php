@@ -8,7 +8,7 @@
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2025 Andrey Helldar
  *
  * @license MIT
  *
@@ -35,15 +35,15 @@ class Arr
     /**
      * Get a new arrayable object from the given array.
      */
-    public function of(array|ArrayObject|null $value = []): Ables\Arrayable
+    public function of(array|ArrayObject|null $value = []): ArrayableHelper
     {
-        return new Ables\Arrayable($value);
+        return new ArrayableHelper($value);
     }
 
     /**
      * Get a new arrayable object from the given array from the php or json array file.
      */
-    public function ofFile(string $path): Ables\Arrayable
+    public function ofFile(string $path): ArrayableHelper
     {
         $content = File::load($path);
 
@@ -154,7 +154,7 @@ class Arr
     {
         $sorter = array_intersect($sorter, array_keys($array));
 
-        return array_merge(array_flip($sorter), $array);
+        return $this->merge(array_flip($sorter), $array);
     }
 
     /**
@@ -297,7 +297,7 @@ class Arr
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param  ArrayAccess|\DragonCode\Contracts\Support\Arrayable|\Illuminate\Contracts\Support\Arrayable|array  $array  |\ArrayAccess
+     * @param  ArrayAccess|Arrayable|ArrayableIlluminate|array  $array  |\ArrayAccess
      *     $array
      */
     public function exists(mixed $array, mixed $key): bool
@@ -325,7 +325,7 @@ class Arr
     /**
      * Determine if the given key doesn't exist in the provided array.
      *
-     * @param  ArrayAccess|\DragonCode\Contracts\Support\Arrayable|\Illuminate\Contracts\Support\Arrayable|array  $array
+     * @param  ArrayAccess|Arrayable|ArrayableIlluminate|array  $array
      */
     public function doesntExist(mixed $array, mixed $key): bool
     {
@@ -335,7 +335,7 @@ class Arr
     /**
      * Determine if the given key exists in the provided array without dot divider.
      *
-     * @param  ArrayAccess|\DragonCode\Contracts\Support\Arrayable|\Illuminate\Contracts\Support\Arrayable|array  $array  |\ArrayAccess
+     * @param  ArrayAccess|Arrayable|ArrayableIlluminate|array  $array  |\ArrayAccess
      *     $array
      */
     public function existsWithoutDot(mixed $array, mixed $key): bool
@@ -350,7 +350,7 @@ class Arr
     /**
      * Determine if the given key doesn't exist in the provided array without dot divider.
      *
-     * @param  ArrayAccess|\DragonCode\Contracts\Support\Arrayable|\Illuminate\Contracts\Support\Arrayable|array  $array  |\ArrayAccess
+     * @param  ArrayAccess|Arrayable|ArrayableIlluminate|array  $array  |\ArrayAccess
      *     $array
      */
     public function doesntExistWithoutDot(mixed $array, mixed $key): bool
@@ -363,7 +363,7 @@ class Arr
      *
      * @see https://github.com/illuminate/collections/blob/master/Arr.php
      *
-     * @param  ArrayAccess|\DragonCode\Contracts\Support\Arrayable|\Illuminate\Contracts\Support\Arrayable|array  $array  |ArrayAccess
+     * @param  ArrayAccess|Arrayable|ArrayableIlluminate|array  $array  |ArrayAccess
      *     $array
      *
      * @return mixed|null
@@ -542,7 +542,7 @@ class Arr
             if (is_array($value)) {
                 $values = $this->flattenKeys($value, $delimiter, $new_key);
 
-                $result = array_merge($result, $values);
+                $result = $this->merge($result, $values);
 
                 continue;
             }
@@ -655,6 +655,10 @@ class Arr
             return true;
         }
 
+        if (is_string($value) && in_array(trim($value), ['/', '\\'])) {
+            return false;
+        }
+
         if (
             is_string($value)
             && method_exists($value, 'toArray')
@@ -691,9 +695,20 @@ class Arr
     }
 
     /**
-     * Determines if the value is doesn't empty.
+     * Determines if the value doesn't empty.
+     *
+     * @deprecated
+     * @see self::isNotEmpty()
      */
     public function doesntEmpty(mixed $value): bool
+    {
+        return ! $this->isEmpty($value);
+    }
+
+    /**
+     * Determines if the value isn't empty.
+     */
+    public function isNotEmpty(mixed $value): bool
     {
         return ! $this->isEmpty($value);
     }

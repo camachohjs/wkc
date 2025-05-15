@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -40,8 +40,12 @@ class Resolver
         return static::toString((string) $locale);
     }
 
-    public static function toString(Locale|string|null $locale): ?string
+    public static function toString(Locale|LocaleData|string|null $locale): ?string
     {
+        if ($locale instanceof LocaleData) {
+            return $locale->locale->value;
+        }
+
         return $locale?->value ?? $locale;
     }
 }

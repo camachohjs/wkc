@@ -9,7 +9,6 @@ use Sentry\EventType;
 use Sentry\Options;
 use Sentry\Serializer\EnvelopItems\CheckInItem;
 use Sentry\Serializer\EnvelopItems\EventItem;
-use Sentry\Serializer\EnvelopItems\MetricsItem;
 use Sentry\Serializer\EnvelopItems\ProfileItem;
 use Sentry\Serializer\EnvelopItems\TransactionItem;
 use Sentry\Tracing\DynamicSamplingContext;
@@ -43,10 +42,7 @@ final class PayloadSerializer implements PayloadSerializerInterface
             'event_id' => (string) $event->getId(),
             'sent_at' => gmdate('Y-m-d\TH:i:s\Z'),
             'dsn' => (string) $this->options->getDsn(),
-            'sdk' => [
-                'name' => $event->getSdkIdentifier(),
-                'version' => $event->getSdkVersion(),
-            ],
+            'sdk' => $event->getSdkPayload(),
         ];
 
         $dynamicSamplingContext = $event->getSdkMetadata('dynamic_sampling_context');
@@ -77,9 +73,6 @@ final class PayloadSerializer implements PayloadSerializerInterface
                 break;
             case EventType::checkIn():
                 $items = CheckInItem::toEnvelopeItem($event);
-                break;
-            case EventType::metrics():
-                $items = MetricsItem::toEnvelopeItem($event);
                 break;
         }
 

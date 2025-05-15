@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -25,7 +25,8 @@ class CountryData implements Arrayable
         public string $code,
         public string $native,
         public string $localized
-    ) {}
+    ) {
+    }
 
     public function toArray(): array
     {

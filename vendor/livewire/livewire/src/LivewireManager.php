@@ -12,6 +12,7 @@ use Livewire\Mechanisms\ComponentRegistry;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Features\SupportTesting\DuskTestable;
 use Livewire\Features\SupportAutoInjectedAssets\SupportAutoInjectedAssets;
+use Livewire\Features\SupportLazyLoading\SupportLazyLoading;
 
 class LivewireManager
 {
@@ -91,6 +92,11 @@ class LivewireManager
         return last(app(HandleComponents::class)::$componentStack);
     }
 
+    function findSynth($keyOrTarget, $component)
+    {
+        return app(HandleComponents::class)->findSynth($keyOrTarget, $component);
+    }
+
     function update($snapshot, $diff, $calls)
     {
         return app(HandleComponents::class)->update($snapshot, $diff, $calls);
@@ -100,7 +106,9 @@ class LivewireManager
     {
         $dummyContext = new ComponentContext($component, false);
 
-        return app(HandleComponents::class)->updateProperty($component, $path, $value, $dummyContext);
+        $updatedHook = app(HandleComponents::class)->updateProperty($component, $path, $value, $dummyContext);
+
+        $updatedHook();
     }
 
     function isLivewireRequest()
@@ -177,6 +185,13 @@ class LivewireManager
         return $this;
     }
 
+    function withoutLazyLoading()
+    {
+        SupportLazyLoading::disableWhileTesting();
+
+        return $this;
+    }
+
     function test($name, $params = [])
     {
         return Testable::create(
@@ -184,7 +199,7 @@ class LivewireManager
             $params,
             $this->queryParamsForTesting,
             $this->cookiesForTesting,
-            $this->headersForTesting
+            $this->headersForTesting,
         );
     }
 

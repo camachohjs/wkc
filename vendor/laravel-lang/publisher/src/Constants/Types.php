@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -20,5 +20,5 @@ namespace LaravelLang\Publisher\Constants;
 enum Types: string
 {
     case TypeClass = 'class';
-    case TypeName  = 'name';
+    case TypeName = 'name';
 }

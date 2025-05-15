@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -62,17 +62,19 @@ abstract class Processor
 
     public function collect(): self
     {
+        $this->info('Collecting translations...');
+
         foreach ($this->plugins() as $directory => $plugins) {
-            $this->info($this->config->getPackageNameByPath($directory, Types::TypeClass));
-
-            $this->task('Collect source', function () use ($directory, $plugins) {
-                /** @var Plugin $plugin */
-                foreach ($plugins as $plugin) {
-                    $this->collectKeys($directory, $plugin->files());
+            $this->task(
+                $this->config->getPackageNameByPath($directory, Types::TypeClass),
+                function () use ($directory, $plugins) {
+                    /** @var Plugin $plugin */
+                    foreach ($plugins as $plugin) {
+                        $this->collectKeys($directory, $plugin->files());
+                        $this->collectLocalizations($directory, $plugin->files());
+                    }
                 }
-            });
-
-            $this->collectLocalizations($directory);
+            );
         }
 
         return $this;
@@ -110,16 +112,18 @@ abstract class Processor
         }
     }
 
-    protected function collectLocalizations(string $directory): void
+    protected function collectLocalizations(string $directory, array $files): void
     {
-        foreach ($this->locales as $locale) {
-            $locale = $locale?->value ?? $locale;
+        foreach ($files as $filename) {
+            $keys = array_keys($this->translation->getSource($filename));
 
-            $locale_alias = $this->toAlias($locale);
+            foreach ($this->locales as $locale) {
+                $locale = $this->fromAlias($locale?->value ?? $locale);
 
-            $this->task('Collecting ' . $locale, function () use ($locale, $locale_alias, $directory) {
+                $locale_alias = $this->toAlias($locale);
+
                 foreach ($this->file_types as $type) {
-                    $main_path   = $this->localeFilename($locale_alias, "$directory/locales/$locale/$type.json");
+                    $main_path = $this->localeFilename($locale_alias, "$directory/locales/$locale/$type.json");
                     $inline_path = $this->localeFilename($locale_alias, "$directory/locales/$locale/$type.json", true);
 
                     $values = $this->filesystem->load($main_path);
@@ -128,22 +132,25 @@ abstract class Processor
                         $values = $this->arr->merge($values, $this->filesystem->load($inline_path));
                     }
 
-                    $this->translation->setTranslations($locale_alias, $values);
+                    $values = collect($values)->only($keys)->toArray();
+
+                    $this->translation->setTranslations($filename, $locale_alias, $values);
                 }
-            });
+            }
         }
     }
 
     /**
-     * @return array<\LaravelLang\Publisher\Plugins\Plugin>
+     * @return array<Plugin>
      */
     protected function plugins(): array
     {
         return collect($this->config->getPlugins())
-            ->map(fn (array $plugins) => collect($plugins)
-                ->map(static fn (string $plugin) => new $plugin())
-                ->filter(static fn (Plugin $plugin) => $plugin->has())
-                ->all()
+            ->map(
+                fn (array $plugins) => collect($plugins)
+                    ->map(static fn (string $plugin) => new $plugin())
+                    ->filter(static fn (Plugin $plugin) => $plugin->has())
+                    ->all()
             )
             ->filter()
             ->all();

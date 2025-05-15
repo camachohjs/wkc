@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -71,7 +71,7 @@ class Php extends Base
     protected function validationSort(array $items): array
     {
         $attributes = Arr::get($items, 'attributes');
-        $custom     = Arr::get($items, 'custom');
+        $custom = Arr::get($items, 'custom');
 
         return Arr::of($items)
             ->except(['attributes', 'custom'])

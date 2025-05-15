@@ -59,6 +59,8 @@ final class GuzzleTracingMiddleware
                     $spanContext->setDescription($request->getMethod() . ' ' . $partialUri);
 
                     $childSpan = $parentSpan->startChild($spanContext);
+
+                    $hub->setSpan($childSpan);
                 }
 
                 if (self::shouldAttachTracingHeaders($client, $request)) {
@@ -68,11 +70,13 @@ final class GuzzleTracingMiddleware
                         ->withHeader('baggage', getBaggage());
                 }
 
-                $handlerPromiseCallback = static function ($responseOrException) use ($hub, $spanAndBreadcrumbData, $childSpan, $partialUri) {
+                $handlerPromiseCallback = static function ($responseOrException) use ($hub, $spanAndBreadcrumbData, $childSpan, $parentSpan, $partialUri) {
                     if ($childSpan !== null) {
                         // We finish the span (which means setting the span end timestamp) first to ensure the measured time
                         // the span spans is as close to only the HTTP request time and do the data collection afterwards
                         $childSpan->finish();
+
+                        $hub->setSpan($parentSpan);
                     }
 
                     $response = null;
@@ -84,9 +88,17 @@ final class GuzzleTracingMiddleware
                         $response = $responseOrException->getResponse();
                     }
 
+                    $breadcrumbLevel = Breadcrumb::LEVEL_INFO;
+
                     if ($response !== null) {
                         $spanAndBreadcrumbData['http.response.body.size'] = $response->getBody()->getSize();
                         $spanAndBreadcrumbData['http.response.status_code'] = $response->getStatusCode();
+
+                        if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 500) {
+                            $breadcrumbLevel = Breadcrumb::LEVEL_WARNING;
+                        } elseif ($response->getStatusCode() >= 500) {
+                            $breadcrumbLevel = Breadcrumb::LEVEL_ERROR;
+                        }
                     }
 
                     if ($childSpan !== null) {
@@ -99,7 +111,7 @@ final class GuzzleTracingMiddleware
                     }
 
                     $hub->addBreadcrumb(new Breadcrumb(
-                        Breadcrumb::LEVEL_INFO,
+                        $breadcrumbLevel,
                         Breadcrumb::TYPE_HTTP,
                         'http',
                         null,

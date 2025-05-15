@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -35,5 +35,18 @@ class Arr
     protected function filter(array $source, array $target, bool $filter_keys = false): array
     {
         return $filter_keys ? DragonArr::only($target, DragonArr::keys($source)) : $target;
+    }
+
+    public function ksort(array $source): array
+    {
+        ksort($source);
+
+        foreach ($source as $key => &$value) {
+            if (is_array($value)) {
+                $value = $this->ksort($value);
+            }
+        }
+
+        return $source;
     }
 }

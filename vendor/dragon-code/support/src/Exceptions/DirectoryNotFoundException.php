@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the "dragon-code/support" project.
  *
@@ -7,7 +8,7 @@
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -17,11 +18,9 @@
 namespace DragonCode\Support\Exceptions;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 
 class DirectoryNotFoundException extends Exception
 {
-    #[Pure]
     public function __construct(?string $path)
     {
         parent::__construct('Directory "' . $path . '" does not exist.');

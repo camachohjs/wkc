@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -19,33 +19,13 @@ namespace LaravelLang\Locales;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use LaravelLang\Locales\Concerns\About;
-use LaravelLang\Locales\Enums\Config;
 
 class ServiceProvider extends BaseServiceProvider
 {
     use About;
 
-    public function boot(): void
-    {
-        $this->bootPublishes();
-    }
-
     public function register(): void
     {
-        $this->registerConfig();
         $this->registerAbout();
-    }
-
-    protected function bootPublishes(): void
-    {
-        $this->publishes([
-            __DIR__ . '/../config/public.php' => $this->app->configPath(Config::PublicKey() . '.php'),
-        ], ['config', Config::PublicKey()]);
-    }
-
-    protected function registerConfig(): void
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/public.php', Config::PublicKey());
-        $this->mergeConfigFrom(__DIR__ . '/../config/private.php', Config::PrivateKey());
     }
 }

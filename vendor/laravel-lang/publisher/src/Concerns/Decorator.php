@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -23,7 +23,7 @@ trait Decorator
     {
         foreach ($values as &$value) {
             if (is_array($value)) {
-                $value = $this->decorate($locale, $values);
+                $value = $this->decorate($locale, $value);
 
                 continue;
             }

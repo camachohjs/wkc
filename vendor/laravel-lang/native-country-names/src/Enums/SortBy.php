@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -19,7 +19,7 @@ namespace LaravelLang\NativeCountryNames\Enums;
 
 enum SortBy: int
 {
-    case None  = 0;
-    case Key   = 1;
+    case None = 0;
+    case Key = 1;
     case Value = 2;
 }

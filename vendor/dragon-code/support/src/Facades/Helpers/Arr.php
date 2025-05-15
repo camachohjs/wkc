@@ -8,7 +8,7 @@
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
  *
- * @copyright 2023 Andrey Helldar
+ * @copyright 2024 Andrey Helldar
  *
  * @license MIT
  *
@@ -60,6 +60,7 @@ use DragonCode\Support\Helpers\Arr as Helper;
  * @method static bool existsWithoutDot(array|ArrayAccess $array, $key)
  * @method static bool isArrayable($value = null)
  * @method static bool isEmpty($value)
+ * @method static bool isNotEmpty($value)
  * @method static int count(ArrayObject|array $array)
  * @method static int longestStringLength(array $array)
  * @method static mixed first(iterable $array, ?callable $callback = null, mixed $default = null)

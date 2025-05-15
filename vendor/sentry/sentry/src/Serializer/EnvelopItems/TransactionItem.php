@@ -35,10 +35,7 @@ class TransactionItem implements EnvelopeItemInterface
         $payload = [
             'timestamp' => $event->getTimestamp(),
             'platform' => 'php',
-            'sdk' => [
-                'name' => $event->getSdkIdentifier(),
-                'version' => $event->getSdkVersion(),
-            ],
+            'sdk' => $event->getSdkPayload(),
         ];
 
         if ($event->getStartTimestamp() !== null) {
@@ -125,10 +122,6 @@ class TransactionItem implements EnvelopeItemInterface
 
         $payload['spans'] = array_values(array_map([self::class, 'serializeSpan'], $event->getSpans()));
 
-        if (!empty($event->getMetricsSummary())) {
-            $payload['_metrics_summary'] = self::serializeMetricsSummary($event->getMetricsSummary());
-        }
-
         $transactionMetadata = $event->getSdkMetadata('transaction_metadata');
         if ($transactionMetadata instanceof TransactionMetadata) {
             $payload['transaction_info']['source'] = (string) $transactionMetadata->getSource();
@@ -191,28 +184,6 @@ class TransactionItem implements EnvelopeItemInterface
             $result['tags'] = $span->getTags();
         }
 
-        if (!empty($span->getMetricsSummary())) {
-            $result['_metrics_summary'] = self::serializeMetricsSummary($span->getMetricsSummary());
-        }
-
         return $result;
-    }
-
-    /**
-     * @param array<string, array<string, MetricsSummary>> $metricsSummary
-     *
-     * @return array<string, mixed>
-     */
-    protected static function serializeMetricsSummary(array $metricsSummary): array
-    {
-        $formattedSummary = [];
-
-        foreach ($metricsSummary as $mri => $metrics) {
-            foreach ($metrics as $metric) {
-                $formattedSummary[$mri][] = $metric;
-            }
-        }
-
-        return $formattedSummary;
     }
 }

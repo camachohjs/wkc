@@ -9,6 +9,7 @@
  */
 namespace PHPUnit\TextUI\CliArguments;
 
+use const DIRECTORY_SEPARATOR;
 use function array_map;
 use function basename;
 use function explode;
@@ -16,11 +17,15 @@ use function getcwd;
 use function is_file;
 use function is_numeric;
 use function sprintf;
+use PHPUnit\Event\Facade as EventFacade;
 use PHPUnit\Runner\TestSuiteSorter;
+use PHPUnit\Util\Filesystem;
 use SebastianBergmann\CliParser\Exception as CliParserException;
 use SebastianBergmann\CliParser\Parser as CliParser;
 
 /**
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
+ *
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
  */
 final class Builder
@@ -45,12 +50,16 @@ final class Builder
         'coverage-html=',
         'coverage-php=',
         'coverage-text==',
+        'only-summary-for-coverage-text',
+        'show-uncovered-for-coverage-text',
         'coverage-xml=',
         'path-coverage',
         'disallow-test-output',
+        'display-all-issues',
         'display-incomplete',
         'display-skipped',
         'display-deprecations',
+        'display-phpunit-deprecations',
         'display-errors',
         'display-notices',
         'display-warnings',
@@ -93,7 +102,9 @@ final class Builder
         'reverse-list',
         'static-backup',
         'stderr',
+        'fail-on-all-issues',
         'fail-on-deprecation',
+        'fail-on-phpunit-deprecation',
         'fail-on-empty-test-suite',
         'fail-on-incomplete',
         'fail-on-notice',
@@ -122,8 +133,14 @@ final class Builder
         'log-events-text=',
         'log-events-verbose-text=',
         'version',
+        'debug',
     ];
     private const SHORT_OPTIONS = 'd:c:h';
+
+    /**
+     * @psalm-var array<string, non-negative-int>
+     */
+    private array $processed = [];
 
     /**
      * @throws Exception
@@ -172,9 +189,11 @@ final class Builder
         $defaultTimeLimit                  = null;
         $disableCodeCoverageIgnore         = null;
         $disallowTestOutput                = null;
+        $displayAllIssues                  = null;
         $displayIncomplete                 = null;
         $displaySkipped                    = null;
         $displayDeprecations               = null;
+        $displayPhpunitDeprecations        = null;
         $displayErrors                     = null;
         $displayNotices                    = null;
         $displayWarnings                   = null;
@@ -182,7 +201,9 @@ final class Builder
         $excludeGroups                     = null;
         $executionOrder                    = null;
         $executionOrderDefects             = null;
+        $failOnAllIssues                   = null;
         $failOnDeprecation                 = null;
+        $failOnPhpunitDeprecation          = null;
         $failOnEmptyTestSuite              = null;
         $failOnIncomplete                  = null;
         $failOnNotice                      = null;
@@ -240,8 +261,11 @@ final class Builder
         $logEventsVerboseText              = null;
         $printerTeamCity                   = null;
         $printerTestDox                    = null;
+        $debug                             = false;
 
         foreach ($options[0] as $option) {
+            $optionAllowedMultipleTimes = false;
+
             switch ($option[0]) {
                 case '--colors':
                     $colors = $option[1] ?: \PHPUnit\TextUI\Configuration\Configuration::COLOR_AUTO;
@@ -328,9 +352,17 @@ final class Builder
                         $option[1] = 'php://stdout';
                     }
 
-                    $coverageText                   = $option[1];
-                    $coverageTextShowUncoveredFiles = false;
-                    $coverageTextShowOnlySummary    = false;
+                    $coverageText = $option[1];
+
+                    break;
+
+                case '--only-summary-for-coverage-text':
+                    $coverageTextShowOnlySummary = true;
+
+                    break;
+
+                case '--show-uncovered-for-coverage-text':
+                    $coverageTextShowUncoveredFiles = true;
 
                     break;
 
@@ -354,6 +386,8 @@ final class Builder
                             $iniSettings[$tmp[0]] = '1';
                         }
                     }
+
+                    $optionAllowedMultipleTimes = true;
 
                     break;
 
@@ -390,7 +424,7 @@ final class Builder
                 case '--use-baseline':
                     $useBaseline = $option[1];
 
-                    if (!is_file($useBaseline) && basename($useBaseline) === $useBaseline) {
+                    if (basename($useBaseline) === $useBaseline && !is_file($useBaseline)) {
                         $useBaseline = getcwd() . DIRECTORY_SEPARATOR . $useBaseline;
                     }
 
@@ -538,8 +572,18 @@ final class Builder
 
                     break;
 
+                case '--fail-on-all-issues':
+                    $failOnAllIssues = true;
+
+                    break;
+
                 case '--fail-on-deprecation':
                     $failOnDeprecation = true;
+
+                    break;
+
+                case '--fail-on-phpunit-deprecation':
+                    $failOnPhpunitDeprecation = true;
 
                     break;
 
@@ -718,6 +762,11 @@ final class Builder
 
                     break;
 
+                case '--display-all-issues':
+                    $displayAllIssues = true;
+
+                    break;
+
                 case '--display-incomplete':
                     $displayIncomplete = true;
 
@@ -730,6 +779,11 @@ final class Builder
 
                 case '--display-deprecations':
                     $displayDeprecations = true;
+
+                    break;
+
+                case '--display-phpunit-deprecations':
+                    $displayPhpunitDeprecations = true;
 
                     break;
 
@@ -775,6 +829,8 @@ final class Builder
 
                     $coverageFilter[] = $option[1];
 
+                    $optionAllowedMultipleTimes = true;
+
                     break;
 
                 case '--random-order':
@@ -803,14 +859,41 @@ final class Builder
                     break;
 
                 case '--log-events-text':
-                    $logEventsText = $option[1];
+                    $logEventsText = Filesystem::resolveStreamOrFile($option[1]);
+
+                    if ($logEventsText === false) {
+                        throw new Exception(
+                            sprintf(
+                                'The path "%s" specified for the --log-events-text option could not be resolved',
+                                $option[1],
+                            ),
+                        );
+                    }
 
                     break;
 
                 case '--log-events-verbose-text':
-                    $logEventsVerboseText = $option[1];
+                    $logEventsVerboseText = Filesystem::resolveStreamOrFile($option[1]);
+
+                    if ($logEventsVerboseText === false) {
+                        throw new Exception(
+                            sprintf(
+                                'The path "%s" specified for the --log-events-verbose-text option could not be resolved',
+                                $option[1],
+                            ),
+                        );
+                    }
 
                     break;
+
+                case '--debug':
+                    $debug = true;
+
+                    break;
+            }
+
+            if (!$optionAllowedMultipleTimes) {
+                $this->markProcessed($option[0]);
             }
         }
 
@@ -855,7 +938,9 @@ final class Builder
             $excludeGroups,
             $executionOrder,
             $executionOrderDefects,
+            $failOnAllIssues,
             $failOnDeprecation,
+            $failOnPhpunitDeprecation,
             $failOnEmptyTestSuite,
             $failOnIncomplete,
             $failOnNotice,
@@ -908,9 +993,11 @@ final class Builder
             $testSuite,
             $excludeTestSuite,
             $useDefaultConfiguration,
+            $displayAllIssues,
             $displayIncomplete,
             $displaySkipped,
             $displayDeprecations,
+            $displayPhpunitDeprecations,
             $displayErrors,
             $displayNotices,
             $displayWarnings,
@@ -920,6 +1007,30 @@ final class Builder
             $logEventsVerboseText,
             $printerTeamCity,
             $printerTestDox,
+            $debug,
         );
+    }
+
+    /**
+     * @psalm-param non-empty-string $option
+     */
+    private function markProcessed(string $option): void
+    {
+        if (!isset($this->processed[$option])) {
+            $this->processed[$option] = 1;
+
+            return;
+        }
+
+        $this->processed[$option]++;
+
+        if ($this->processed[$option] === 2) {
+            EventFacade::emitter()->testRunnerTriggeredPhpunitWarning(
+                sprintf(
+                    'Option %s cannot be used more than once',
+                    $option,
+                ),
+            );
+        }
     }
 }

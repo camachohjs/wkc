@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -26,7 +26,8 @@ class NativeData
     public function __construct(
         public readonly array $native,
         public readonly array $localized
-    ) {}
+    ) {
+    }
 
     public function getNative(string $locale): mixed
     {

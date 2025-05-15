@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace LaravelLang\Publisher;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
-use LaravelLang\Locales\Enums\Config;
 use LaravelLang\Publisher\Concerns\About;
 use LaravelLang\Publisher\Console\Add;
 use LaravelLang\Publisher\Console\Remove;
@@ -31,13 +30,11 @@ class ServiceProvider extends BaseServiceProvider
 
     public function boot(): void
     {
-        $this->bootPublishes();
         $this->bootCommands();
     }
 
     public function register(): void
     {
-        $this->registerConfig();
         $this->registerAbout();
     }
 
@@ -49,19 +46,5 @@ class ServiceProvider extends BaseServiceProvider
             Reset::class,
             Update::class,
         ]);
-    }
-
-    protected function bootPublishes(): void
-    {
-        $this->publishes(
-            [__DIR__ . '/../config/public.php' => $this->app->configPath(Config::PublicKey() . '.php')],
-            ['config', Config::PublicKey()]
-        );
-    }
-
-    protected function registerConfig(): void
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/public.php', Config::PublicKey());
-        $this->mergeConfigFrom(__DIR__ . '/../config/private.php', Config::PrivateKey());
     }
 }

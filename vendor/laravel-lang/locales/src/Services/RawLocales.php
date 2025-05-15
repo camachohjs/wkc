@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2024 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -21,12 +21,15 @@ use DragonCode\Support\Facades\Filesystem\Path;
 use Illuminate\Support\Collection;
 use LaravelLang\LocaleList\Locale;
 use LaravelLang\Locales\Concerns\Aliases;
+use LaravelLang\Locales\Concerns\Application;
 use LaravelLang\Locales\Concerns\Pathable;
 use LaravelLang\Locales\Concerns\Registry;
+use LaravelLang\Locales\Data\LocaleData;
 
 class RawLocales
 {
     use Aliases;
+    use Application;
     use Pathable;
     use Registry;
 
@@ -56,7 +59,7 @@ class RawLocales
                 )
                 ->flatten()
                 ->map(fn (string $name) => $this->toAlias(Path::filename($name)))
-                ->filter(fn (string $locale) => $this->isAvailable($locale))
+                ->filter(fn (?string $locale) => $this->isAvailable($locale))
                 ->when(! $withProtects, fn (Collection $items) => $items->filter(
                     fn (string $locale) => ! $this->isProtected($locale)
                 ))
@@ -80,7 +83,7 @@ class RawLocales
         ])->filter()->unique()->sort()->values()->all());
     }
 
-    public function isAvailable(Locale|string|null $locale): bool
+    public function isAvailable(Locale|LocaleData|string|null $locale): bool
     {
         $locales = $this->available();
 
@@ -88,7 +91,7 @@ class RawLocales
             || $this->inArray($this->fromAlias($locale), $locales);
     }
 
-    public function isInstalled(Locale|string|null $locale): bool
+    public function isInstalled(Locale|LocaleData|string|null $locale): bool
     {
         return $this->registry([__METHOD__, $locale], function () use ($locale) {
             $locales = $this->installed();
@@ -98,7 +101,7 @@ class RawLocales
         });
     }
 
-    public function isProtected(Locale|string|null $locale): bool
+    public function isProtected(Locale|LocaleData|string|null $locale): bool
     {
         return $this->registry([__METHOD__, $locale], function () use ($locale) {
             $locales = $this->protects();
@@ -110,7 +113,7 @@ class RawLocales
 
     public function get(mixed $locale): string
     {
-        return $this->registry([__METHOD__, $locale], function () use ($locale) {
+        return $this->registry([__METHOD__, $locale, $this->appLocale()], function () use ($locale) {
             $locale = Resolver::fromMixed($locale);
 
             if ($this->isInstalled($locale)) {
@@ -123,7 +126,7 @@ class RawLocales
 
     public function getDefault(): string
     {
-        return $this->registry(__METHOD__, function () {
+        return $this->registry([__METHOD__, $this->appLocale()], function () {
             $locale = config('app.locale');
 
             return $this->toAlias(
@@ -134,12 +137,12 @@ class RawLocales
 
     public function getCurrent(): string
     {
-        return $this->getDefault();
+        return app()->getLocale();
     }
 
     public function getFallback(): string
     {
-        return $this->registry(__METHOD__, function () {
+        return $this->registry([__METHOD__, $this->appLocale()], function () {
             $locale = config('app.fallback_locale');
 
             if ($this->isAvailable($locale)) {
@@ -156,7 +159,7 @@ class RawLocales
 
     public function info(mixed $locale): string
     {
-        return $this->registry([__METHOD__, $locale], function () use ($locale) {
+        return $this->registry([__METHOD__, $locale, $this->appLocale()], function () use ($locale) {
             $locale = Resolver::fromMixed($locale);
 
             if ($this->isAvailable($locale)) {
@@ -167,7 +170,7 @@ class RawLocales
         });
     }
 
-    protected function inArray(Locale|string|null $locale, array $haystack): bool
+    protected function inArray(Locale|LocaleData|string|null $locale, array $haystack): bool
     {
         $locale = Resolver::toString($locale);
 

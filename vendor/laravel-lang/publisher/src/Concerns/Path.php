@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  *
  * @author Andrey Helldar <helldar@dragon-code.pro>
- * @copyright 2023 Laravel Lang Team
+ * @copyright 2025 Laravel Lang Team
  * @license MIT
  *
  * @see https://laravel-lang.com
@@ -28,10 +28,10 @@ trait Path
         $path = Str::replaceFormat($path, compact('locale'), '{%s}');
 
         $directory = PathHelper::dirname($path);
-        $filename  = PathHelper::filename($path);
+        $filename = PathHelper::filename($path);
         $extension = PathHelper::extension($path);
 
-        $main   = "$directory/$filename.$extension";
+        $main = "$directory/$filename.$extension";
         $inline = "$directory/$filename-inline.$extension";
 
         return $has_inline && File::exists($inline) ? $inline : $main;
