@@ -7,8 +7,8 @@
     },
     "devDependencies": {
         "axios": "^1.6.1",
-        "laravel-vite-plugin": "^0.8.0",
-        "vite": "^4.0.0"
+        "laravel-vite-plugin": "^1.3.0",
+        "vite": "^6.3.5"
     },
     "dependencies": {
         "autoprefixer": "^10.4.16",

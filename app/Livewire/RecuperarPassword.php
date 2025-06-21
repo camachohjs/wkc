@@ -22,21 +22,18 @@ class RecuperarPassword extends Component
         $this->validate([
             'email' => 'required|email',
         ]);
-
         try {
             $status = Password::sendResetLink(['email' => $this->email]);
 
             if ($status === Password::RESET_LINK_SENT) {
                 Mail::to($this->email)->send(new ResetPasswordMail($status));
-                //dd($status);
-
                 flash()->options([
-                'position' => 'top-center',
-            ])->addSuccess('Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.');
+                    'position' => 'top-center',
+                ])->addSuccess('Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.');
             } else {
                 flash()->options([
-                'position' => 'top-center',
-            ])->addError('No se pudo enviar el enlace para restablecer la contraseña. Por favor, verifica la dirección de correo electrónico.');
+                    'position' => 'top-center',
+                ])->addError('No se pudo enviar el enlace para restablecer la contraseña. Por favor, verifica la dirección de correo electrónico.');
             }
         } catch (\Exception $exception) {
             flash()->options([
