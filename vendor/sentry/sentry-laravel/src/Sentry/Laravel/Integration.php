@@ -8,6 +8,7 @@ use Sentry\EventHint;
 use Sentry\EventId;
 use Sentry\ExceptionMechanism;
 use Sentry\Laravel\Integration\ModelViolations as ModelViolationReports;
+use Sentry\Logs\Logs;
 use Sentry\SentrySdk;
 use Sentry\Tracing\TransactionSource;
 use Throwable;
@@ -120,6 +121,8 @@ class Integration implements IntegrationInterface
 
         if ($client !== null) {
             $client->flush();
+
+            Logs::getInstance()->flush();
         }
     }
 
@@ -194,11 +197,12 @@ class Integration implements IntegrationInterface
     /**
      * Retrieve the `traceparent` meta tag with tracing information to link this request to front-end requests.
      *
+     * @deprecated since version 4.14. To be removed in version 5.0.
      * @return string
      */
     public static function sentryW3CTracingMeta(): string
     {
-        return sprintf('<meta name="traceparent" content="%s"/>', getW3CTraceparent());
+        return '';
     }
 
     /**

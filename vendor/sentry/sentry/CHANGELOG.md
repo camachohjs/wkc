@@ -1,5 +1,93 @@
 # CHANGELOG
 
+## 4.14.1
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry PHP SDK v4.14.1.
+
+### Bug Fixes
+
+- Fix missing user attributes on logs [(#1864)](https://github.com/getsentry/sentry-php/pull/1864)
+
+## 4.14.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry PHP SDK v4.14.0.
+
+### Features
+
+- Serialize enum variants with the variant name [(#1860)](https://github.com/getsentry/sentry-php/pull/1860)
+
+### Bug Fixes
+
+- Fix handling of backtrace frames [(#1862)](https://github.com/getsentry/sentry-php/pull/1862)
+- Set allowed types for `http_ssl_native_ca` [(#1858)](https://github.com/getsentry/sentry-php/pull/1858)
+
+## 4.13.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry PHP SDK v4.13.0.
+
+### Features
+
+- Add regex support for `ignore_exceptions` and `ignore_transactions` [(#1850)](https://github.com/getsentry/sentry-php/pull/1850)
+
+  You can now use regular expressions to ignore exceptions and transactions:
+
+  ```php
+  Sentry\init([
+      'ignore_exceptions' => [
+          '/.*ArgumentException$/',
+      ],
+      'ignore_transactions' => [
+          '/^GET \/api\/users\/\d+$/',
+      ],
+  ]);
+  ```
+
+- Add support for variadic parameters and null values [(#1849)](https://github.com/getsentry/sentry-php/pull/1849)
+
+### Bug Fixes
+
+- Fix `Options::setEnableLogs` [(#1852)](https://github.com/getsentry/sentry-php/pull/1852)
+- Fix `vsprintf` not handling errors [(#1855)](https://github.com/getsentry/sentry-php/pull/1855)
+
+## 4.12.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry PHP SDK v4.12.0.
+
+### Features
+
+- Add support for Sentry Structured Logs [(#1813)](https://github.com/getsentry/sentry-php/pull/1813)
+
+  You can now send logs directly to Sentry using the new logging API:
+
+  ```php
+  Sentry\init([
+      // Enable logs to be sent to Sentry
+      'enable_logs' => true,
+  ]);
+  ```
+
+  ```php
+  use function Sentry\logger;
+
+  // Log messages at different levels
+  logger()->info('User logged in', ['user_id' => 123]);
+  logger()->warn('Deprecated function used', ['function' => 'old_function']);
+  logger()->error('Database connection failed', ['host' => 'db.example.com']);
+  logger()->fatal('Critical system failure: %s', ['Out of memory'], ['component' => 'database']);
+
+  // Flush logs to Sentry
+  logger()->flush();
+
+  // We recommend registering the flushing in a shutdown function
+  register_shutdown_function(static fn () => logger()->flush());
+  ```
+
+  To learn more, head over to our [docs](https://docs.sentry.io/platforms/php/logs/).
+
+### Bug Fixes
+
+- Log correct source of sampling decision [(#1836)](https://github.com/getsentry/sentry-php/pull/1836)
+
 ## 4.11.1
 
 The Sentry SDK team is happy to announce the immediate availability of Sentry PHP SDK v4.11.1.
@@ -47,7 +135,7 @@ The Sentry SDK team is happy to announce the immediate availability of Sentry PH
 
 ### Features
 
-- Allow retrieving a single piece of data from the span by it’s key [(#1767)](https://github.com/getsentry/sentry-php/pull/1767)
+- Allow retrieving a single piece of data from the span by it's key [(#1767)](https://github.com/getsentry/sentry-php/pull/1767)
 
   ```php
   \Sentry\SentrySdk::getCurrentHub()->getSpan()?->setData([

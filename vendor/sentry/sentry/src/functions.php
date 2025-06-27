@@ -7,6 +7,7 @@ namespace Sentry;
 use Psr\Log\LoggerInterface;
 use Sentry\HttpClient\HttpClientInterface;
 use Sentry\Integration\IntegrationInterface;
+use Sentry\Logs\Logs;
 use Sentry\Metrics\Metrics;
 use Sentry\State\Scope;
 use Sentry\Tracing\PropagationContext;
@@ -23,11 +24,13 @@ use Sentry\Tracing\TransactionContext;
  *     before_breadcrumb?: callable,
  *     before_send?: callable,
  *     before_send_check_in?: callable,
+ *     before_send_log?: callable,
  *     before_send_transaction?: callable,
  *     capture_silenced_errors?: bool,
  *     context_lines?: int|null,
  *     default_integrations?: bool,
  *     dsn?: string|bool|null|Dsn,
+ *     enable_logs?: bool,
  *     environment?: string|null,
  *     error_types?: int|null,
  *     http_client?: HttpClientInterface|null,
@@ -46,6 +49,7 @@ use Sentry\Tracing\TransactionContext;
  *     max_breadcrumbs?: int,
  *     max_request_body_size?: "none"|"never"|"small"|"medium"|"always",
  *     max_value_length?: int,
+ *     org_id?: int|null,
  *     prefixes?: array<string>,
  *     profiles_sample_rate?: int|float|null,
  *     release?: string|null,
@@ -53,9 +57,9 @@ use Sentry\Tracing\TransactionContext;
  *     send_attempts?: int,
  *     send_default_pii?: bool,
  *     server_name?: string,
- *     server_name?: string,
  *     spotlight?: bool,
  *     spotlight_url?: string,
+ *     strict_trace_propagation?: bool,
  *     tags?: array<string>,
  *     trace_propagation_targets?: array<string>|null,
  *     traces_sample_rate?: float|int|null,
@@ -305,29 +309,12 @@ function getTraceparent(): string
  * or HTML meta tag value.
  * This function is context aware, as in it either returns the traceparent based
  * on the current span, or the scope's propagation context.
+ *
+ * @deprecated since version 4.12. To be removed in version 5.0.
  */
 function getW3CTraceparent(): string
 {
-    $hub = SentrySdk::getCurrentHub();
-    $client = $hub->getClient();
-
-    if ($client !== null) {
-        $options = $client->getOptions();
-
-        if ($options !== null && $options->isTracingEnabled()) {
-            $span = SentrySdk::getCurrentHub()->getSpan();
-            if ($span !== null) {
-                return $span->toW3CTraceparent();
-            }
-        }
-    }
-
-    $traceParent = '';
-    $hub->configureScope(function (Scope $scope) use (&$traceParent) {
-        $traceParent = $scope->getPropagationContext()->toW3CTraceparent();
-    });
-
-    return $traceParent;
+    return '';
 }
 
 /**
@@ -375,6 +362,14 @@ function continueTrace(string $sentryTrace, string $baggage): TransactionContext
     });
 
     return TransactionContext::fromHeaders($sentryTrace, $baggage);
+}
+
+/**
+ * Get the Sentry Logs client.
+ */
+function logger(): Logs
+{
+    return Logs::getInstance();
 }
 
 /**

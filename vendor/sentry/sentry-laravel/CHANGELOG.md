@@ -1,5 +1,76 @@
 # Changelog
 
+## 4.15.1
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.15.1.
+
+### Misc
+
+- Bum the PHP SDK to version `4.14.1` [(#1013)](https://github.com/getsentry/sentry-laravel/pull/1013)
+
+## 4.15.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.15.0.
+
+### Features
+
+- Add support for Sentry Structured Logs [(#1000)](https://github.com/getsentry/sentry-laravel/pull/1000)
+
+  To enable this feature, add the `sentry_logs` log channel in your `config/logging.php` configuration:
+
+  ```php
+  'channels' => [
+      ...
+      'sentry_logs' => [
+          'driver' => 'sentry_logs',
+          'level' => env('LOG_LEVEL', 'info'),
+      ],
+      ...
+  ],
+  ```
+
+  Add `SENTRY_ENABLE_LOGS=true` to your `.env` file.
+
+  Use the Log facade to sent your logs to Sentry. To learn more, head over to the [Laravel docs](https://laravel.com/docs/logging).
+
+  ```php
+  use Illuminate\Support\Facades\Log;
+
+  Log::channel('sentry_logs')->info('User {id} failed to login.', ['id' => $user->id]);
+  ```
+
+  To learn more, head over to our [docs](https://docs.sentry.io/platforms/php/guides/laravel/logs/).
+
+## 4.14.1
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.14.1.
+
+### Bug Fixes
+
+- Ensure there is a newline before writing env variables [(#1002)](https://github.com/getsentry/sentry-laravel/pull/1002)
+
+  Fixed an issue where the `php artisan sentry:publish` command might not properly add newlines when writing environment variables to the `.env` file.
+
+## 4.14.0
+
+The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.14.0.
+
+### Bug Fixes
+
+- Fix tracing when using Laravel Octane [(#997)](https://github.com/getsentry/sentry-laravel/pull/997)
+
+  When using Laravel Octane, the SDK now correctly cleans up it's state after each request, ensuring that traces are correctly reported.
+
+### Misc
+
+- Add `sentry` prefix to publish group name [(#992)](https://github.com/getsentry/sentry-laravel/pull/992)
+
+  When running `php artisan vendor:publish`, the Sentry package exports are now prefixed with `sentry`, making it easier to distinguish from other packages.
+
+- Remove support for `traceparent` header [(#994)](https://github.com/getsentry/sentry-laravel/pull/994)
+
+  The W3C's `traceparent` header is no longer automatically picked up and emitted by the SDK to prevent non-Sentry SDKs from starting a trace that is unwanted.
+
 ## 4.13.0
 
 The Sentry SDK team is happy to announce the immediate availability of Sentry Laravel SDK v4.13.0.
