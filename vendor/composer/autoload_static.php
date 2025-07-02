@@ -8426,6 +8426,7 @@ class ComposerStaticInit9a10f2e6ed1c03ef2404a688dd6469bc
         'Symfony\\Component\\HttpKernel\\Fragment\\RoutableFragmentRenderer' => __DIR__ . '/..' . '/symfony/http-kernel/Fragment/RoutableFragmentRenderer.php',
         'Symfony\\Component\\HttpKernel\\Fragment\\SsiFragmentRenderer' => __DIR__ . '/..' . '/symfony/http-kernel/Fragment/SsiFragmentRenderer.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\AbstractSurrogate' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/AbstractSurrogate.php',
+        'Symfony\\Component\\HttpKernel\\HttpCache\\CacheWasLockedException' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/CacheWasLockedException.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\Esi' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/Esi.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\HttpCache' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/HttpCache.php',
         'Symfony\\Component\\HttpKernel\\HttpCache\\ResponseCacheStrategy' => __DIR__ . '/..' . '/symfony/http-kernel/HttpCache/ResponseCacheStrategy.php',
