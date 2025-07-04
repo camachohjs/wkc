@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="public/Img/KARATE.png" alt="WKC México" width="100"/>
-  <img src="public/Img/strappberry.png" alt="Strapberry" width="200"/>
+  <!-- <img src="public/Img/strappberry.png" alt="Strapberry" width="200"/> -->
 </p>
 
 Este proyecto es un servidor Laravel para la aplicación WKC. A continuación se detallan los pasos para clonar e instalar el proyecto en tu máquina local.
@@ -22,7 +22,7 @@ Antes de comenzar, asegúrate de tener instalados los siguientes componentes:
 Clona el repositorio en tu máquina local:
 
 ```bash
-git clone git@github.com:strappberry/wkc-server.git
+# git clone git@github.com:strappberry/wkc-server.git
 cd wkc-server
 ```
 
