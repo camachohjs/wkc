@@ -8,6 +8,7 @@ use Livewire\WithFileUploads;
 use App\Models\Maestro;
 use App\Models\Alumno;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class FotoPerfil extends Component
 {
@@ -23,8 +24,10 @@ class FotoPerfil extends Component
     }
 
     public function render()
-    {
-        $usuario = $this->obtenerUsuario();
+    {   
+
+        $usuario = Auth::user();
+        // dd ();
         return view('livewire.foto-perfil', ['usuario' => $usuario]);
     }
 

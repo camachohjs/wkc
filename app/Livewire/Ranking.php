@@ -405,7 +405,7 @@ class Ranking extends Component
         }
 
         $this->rankings = $agrupados;
-
+        dd  ($agrupados);
         return view('livewire.ranking', [
             'rankings' => $this->rankings,
             'torneosLista' => $this->torneosLista,

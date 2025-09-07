@@ -11,15 +11,7 @@ class AdminUserSeeder extends Seeder
     public function run()
     {
         // Asegurarse de que el rol de administrador existe
-        $role = Role::firstOrCreate(['name' => 'admin']);
-
-        // Buscar el usuario existente por ID o correo electrónico
-        $admin = User::where('id', '84')->first();
-
-        // Verificar si el usuario existe
-        if ($admin) {
-            // Asignar el rol de administrador al usuario existente
-            $admin->assignRole($role);
-        }
+        Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'Super Admin']);
     }
 }

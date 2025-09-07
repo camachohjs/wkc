@@ -17,6 +17,9 @@
 
         <div class="col-md-8">
             <h1 class="text-white">Hola, {{ ucfirst($nombre) . ' ' . ucfirst($apellidos) }}</h1>
+
+
+
         </div>
     </div>
     <form wire:submit.prevent="store">
@@ -41,7 +44,7 @@
 
             <div class="col-md-4">
                 <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control custom-form-control" wire:model="email"
+                <input type="label" class="form-control custom-form-control"  wire:model="email"
                     style="border: .5px solid #fff;">
                 @error('email')
                     <span class="text-warning">{{ $message }}</span>

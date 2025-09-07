@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ $title ?? 'WKC - KARATE' }}</title>
+    <title><?php echo e($title ?? 'WKC - KARATE'); ?></title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="stylesheet" href="{{ asset('libs/css/styles.min.css') }}" />
+    <link rel="stylesheet" href="<?php echo e(asset('libs/css/styles.min.css')); ?>" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
@@ -19,14 +19,15 @@
         integrity="sha512-D1liES3uvDpPrgk7vXR/hR/sukGn7EtDWEyvpdLsyalQYq6v6YUsTUJmku7B4rcuQ21rf0UTksw2i/2Pdjbd3g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-    <link rel="stylesheet" href="{{ asset('css/estilos-panel.css') }}">
-    <script src="{{ asset('js/funciones.js') }}"></script>
-    <script src="{{ asset('js/collapse.js') }}"></script>
+    <link rel="stylesheet" href="<?php echo e(asset('css/estilos-panel.css')); ?>">
+    <script src="<?php echo e(asset('js/funciones.js')); ?>"></script>
+    <script src="<?php echo e(asset('js/collapse.js')); ?>"></script>
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/dist/sortablejs.min.js"></script>
-    @livewireStyles
+    <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
+
 </head>
 
 <body>
@@ -39,12 +40,10 @@
             <!-- Sidebar scroll-->
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="{{ url('/panel') }}" class="text-nowrap logo-img text-center mt-5">
-                        <img src="{{ asset('Img/KARATE.png') }}" class="logo-panel" alt="WKC - KARATE">
+                    <a href="<?php echo e(url('/panel')); ?>" class="text-nowrap logo-img text-center mt-5">
+                        <img src="<?php echo e(asset('Img/KARATE.png')); ?>" class="logo-panel" alt="WKC - KARATE">
                     </a>
-                    {{-- <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-                            <i class="ti ti-x fs-8 text-white"></i>
-                        </div> --}}
+                    
                 </div>
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
@@ -53,103 +52,103 @@
                         </li>
 
 
-                        @if (auth()->user()->hasRole('supervisor'))
-                            {{-- maestro --}}
+                        <?php if(auth()->user()->hasRole('supervisor')): ?>
+                            
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('ranking') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('ranking')); ?>"><span
                                         class="hide-menu"><i class="bi bi-list-ol"></i>&nbsp;&nbsp;Ranking</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('mis-competidores') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('mis-competidores')); ?>"><span
                                         class="hide-menu"><i class="bi bi-people"></i>&nbsp;&nbsp;Mis
                                         competidores</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ url('/proximos-eventos') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(url('/proximos-eventos')); ?>"><span
                                         class="hide-menu"><i class="bi bi-calendar2-event"></i>&nbsp;&nbsp;Próximos
                                         eventos</span></a>
                             </li>
-                        @elseif(auth()->user()->hasRole('admin'))
-                            {{-- admin --}}
+                        <?php elseif(auth()->user()->hasRole('admin')): ?>
+                            
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('torneos') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('torneos')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-person-lines-fill"></i>&nbsp;&nbsp;Torneos</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('escuelas') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('escuelas')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-houses-fill"></i>&nbsp;&nbsp;Escuelas</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('ranking') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('ranking')); ?>"><span
                                         class="hide-menu"><i class="bi bi-list-ol"></i>&nbsp;&nbsp;Ranking</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('categorias') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('categorias')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-clipboard-data"></i>&nbsp;&nbsp;Categorias</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('competidores') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('competidores')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-people"></i>&nbsp;&nbsp;Competidores</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('profesores') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('profesores')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-person-arms-up"></i>&nbsp;&nbsp;Sensei</span></a>
                             </li>
-                        @elseif(auth()->user()->hasRole('super-admin'))
-                            {{-- admin --}}
+                        <?php elseif(auth()->user()->hasRole('super-admin')): ?>
+                            
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('torneos') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('torneos')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-person-lines-fill"></i>&nbsp;&nbsp;Torneos</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('escuelas') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('escuelas')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-houses-fill"></i>&nbsp;&nbsp;Escuelas</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('ranking') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('ranking')); ?>"><span
                                         class="hide-menu"><i class="bi bi-list-ol"></i>&nbsp;&nbsp;Ranking</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('categorias') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('categorias')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-clipboard-data"></i>&nbsp;&nbsp;Categorias</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('competidores') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('competidores')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-people"></i>&nbsp;&nbsp;Competidores</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('profesores') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('profesores')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-person-arms-up"></i>&nbsp;&nbsp;Sensei</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('admin.user-roles.index') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('admin.user-roles.index')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-person-arms-up"></i>&nbsp;&nbsp;Roles</span></a>
                             </li>
-                        @else
-                            {{-- alumno --}}
+                        <?php else: ?>
+                            
 
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('dashboard-alumno') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('dashboard-alumno')); ?>"><span
                                         class="hide-menu"><i
                                             class="bi bi-columns-gap"></i>&nbsp;&nbsp;Dashboard</span></a>
                             </li>
                             <li class="sidebar-item">
-                                <a class="sidebar-link texto-panel" href="{{ route('mis-torneos') }}"><span
+                                <a class="sidebar-link texto-panel" href="<?php echo e(route('mis-torneos')); ?>"><span
                                         class="hide-menu"><i class="bi bi-person-lines-fill"></i>&nbsp;&nbsp;Mis
                                         Torneos</span></a>
                             </li>
-                        @endif
+                        <?php endif; ?>
                     </ul>
                     <div class="position-relative rounded">
                         <div class="d-flex text-center" style="place-content: center; font-size: x-large;">
@@ -186,24 +185,36 @@
                                 <i class="ti ti-menu-2" style="color: #EBC010 !important"></i>
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
-                                <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                                    <i class="ti ti-bell-ringing"></i>
-                                    <div class="notification bg-primary rounded-circle"></div>
-                                </a>
-                            </li> --}}
+                        
                     </ul>
-                    @livewire('foto-perfil')
+                    <?php
+$__split = function ($name, $params = []) {
+    return [$name, $params];
+};
+[$__name, $__params] = $__split('foto-perfil');
+
+$__html = app('livewire')->mount($__name, $__params, 'lw-2305656402-0', $__slots ?? [], get_defined_vars());
+
+echo $__html;
+
+unset($__html);
+unset($__name);
+unset($__params);
+unset($__split);
+if (isset($__slots)) unset($__slots);
+?>
                 </nav>
             </header>
-            <script src="{{ asset('libs/libs/jquery/dist/jquery.min.js') }}"></script>
-            <script src="{{ asset('libs/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-            <script src="{{ asset('libs/js/sidebarmenu.js') }}"></script>
-            <script src="{{ asset('libs/js/app.min.js') }}"></script>
+            <script src="<?php echo e(asset('libs/libs/jquery/dist/jquery.min.js')); ?>"></script>
+            <script src="<?php echo e(asset('libs/libs/bootstrap/dist/js/bootstrap.bundle.min.js')); ?>"></script>
+            <script src="<?php echo e(asset('libs/js/sidebarmenu.js')); ?>"></script>
+            <script src="<?php echo e(asset('libs/js/app.min.js')); ?>"></script>
             <div class="container-fluid">
-                {{ $slot }}
+                <?php echo e($slot); ?>
+
             </div>
-            @livewireScripts
+            <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
+
             <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v1.x.x/dist/livewire-sortable.js"></script>
         </div>
     </div>
@@ -226,3 +237,4 @@
         });
     });
 </script>
+<?php /**PATH C:\laragon\www\wkc\resources\views/components/layouts/layout.blade.php ENDPATH**/ ?>

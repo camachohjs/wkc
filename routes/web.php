@@ -1,16 +1,67 @@
 <?php
 
+use App\Http\Controllers\Admin\UserRoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClasificacionesController;
 use App\Http\Controllers\PDFController;
 use App\Livewire\{
-    AgregarEscuela, AlumnoHistorico, Areas, AreasCategorias, AreasCategoriasDivisiones, AreasCategoriasKatas,
-    AtletasGrid, AtletasList, AñadirRanking, Blog, Calificacion, Categorias, CategoriasEdit, CategoriasTorneo, Clasificaciones,
-    CombinarSensei, CompetidorEdit, Register, Login, Menu, Panel, Torneos, Competidores, CrearAlumno, Credenciales,
-    DashboardAlumno, EditarRegistro, Escuelas, EscuelasEdit, Eventos, Formas, FormasEdit, Ganador, InscribirAdmin, Inscritos,
-    MiRanking, MisCompetidores, MisPuntos, MisTorneos, PantallaCombate, PantallaCombateAdmin, PantallaKatas,
-    PasswordForm, ProfesorEdit, Profesores, ProximosEventos, ProximosEventosMaestros, Puntuar, Ranking,
-    RecuperarPassword, RegistrarAdmin, RegistroAlumno, RegistroMaestro, ResultadoKatas, Resultados, SenseiHistorico, TorneoDetalle,
+    AgregarEscuela,
+    AlumnoHistorico,
+    Areas,
+    AreasCategorias,
+    AreasCategoriasDivisiones,
+    AreasCategoriasKatas,
+    AtletasGrid,
+    AtletasList,
+    AñadirRanking,
+    Blog,
+    Calificacion,
+    Categorias,
+    CategoriasEdit,
+    CategoriasTorneo,
+    Clasificaciones,
+    CombinarSensei,
+    CompetidorEdit,
+    Register,
+    Login,
+    Menu,
+    Panel,
+    Torneos,
+    Competidores,
+    CrearAlumno,
+    Credenciales,
+    DashboardAlumno,
+    EditarRegistro,
+    Escuelas,
+    EscuelasEdit,
+    Eventos,
+    Formas,
+    FormasEdit,
+    Ganador,
+    InscribirAdmin,
+    Inscritos,
+    MiRanking,
+    MisCompetidores,
+    MisPuntos,
+    MisTorneos,
+    PantallaCombate,
+    PantallaCombateAdmin,
+    PantallaKatas,
+    PasswordForm,
+    ProfesorEdit,
+    Profesores,
+    ProximosEventos,
+    ProximosEventosMaestros,
+    Puntuar,
+    Ranking,
+    RecuperarPassword,
+    RegistrarAdmin,
+    RegistroAlumno,
+    RegistroMaestro,
+    ResultadoKatas,
+    Resultados,
+    SenseiHistorico,
+    TorneoDetalle,
     TorneosEdit
 };
 use Illuminate\Support\Facades\App;
@@ -62,6 +113,34 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/añadir-ranking/', AñadirRanking::class)->name('añadir-ranking');
         Route::get('/esperando-descarga/{id}', [Inscritos::class, 'esperandoDescarga'])->name('esperando-descarga');
     });
+    Route::middleware(['role:super-admin'])->group(function () {
+        Route::get('/torneos', Torneos::class)->name('torneos');
+        Route::get('/torneos-edit/{id?}', TorneosEdit::class)->name('torneos-edit');
+        Route::get('/competidores', Competidores::class)->name('competidores');
+        Route::get('/escuelas', Escuelas::class)->name('escuelas');
+        Route::get('/escuelas-edit/{id?}', EscuelasEdit::class)->name('escuelas-edit');
+        Route::get('/categorias', Categorias::class)->name('categorias');
+        Route::get('/categorias-edit/{id?}', CategoriasEdit::class)->name('categorias-edit');
+        Route::get('/inscritos/{id}', Inscritos::class)->name('inscritos');
+        Route::get('/inscritos/peso/{id}', Calificacion::class)->name('calificacion');
+        Route::get('/inscritos/puntuar/{id}', Puntuar::class)->name('puntuar');
+        Route::get('/resultados/{id}', Resultados::class)->name('resultados');
+        Route::get('/categorias-torneo/{id}', CategoriasTorneo::class)->name('categorias-torneo');
+        Route::get('/profesores', Profesores::class)->name('profesores');
+        Route::get('/profesor-edit/{id?}', ProfesorEdit::class)->name('profesor-edit');
+        Route::get('/formas', Formas::class)->name('formas');
+        Route::get('/formas-edit/{id?}', FormasEdit::class)->name('formas-edit');
+        Route::get('/alumno-historico', AlumnoHistorico::class)->name('alumno-historico');
+        Route::get('/sensei-historico', SenseiHistorico::class)->name('sensei-historico');
+        Route::get('/combinar-sensei/{id}', CombinarSensei::class)->name('combinar-sensei');
+        Route::get('/credenciales/{torneoId}', Credenciales::class)->name('credenciales');
+        Route::get('/inscribir-admin/{id}', InscribirAdmin::class)->name('inscribir-admin');
+        Route::get('/registrar-admin/{torneo_id}/{id_participante?}', RegistrarAdmin::class)->name('registrar-admin');
+        Route::get('/añadir-ranking/', AñadirRanking::class)->name('añadir-ranking');
+        Route::get('/esperando-descarga/{id}', [Inscritos::class, 'esperandoDescarga'])->name('esperando-descarga');
+        Route::get('user-roles', [UserRoleController::class, 'index'])->name('admin.user-roles.index');
+        Route::post('user-roles/{user}', [UserRoleController::class, 'update'])->name('admin.user-roles.update');
+    });
 
     // Rutas para el rol torneo user y admin
     Route::middleware(['role:torneo user|admin'])->group(function () {
@@ -85,7 +164,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     //Rutas para superivisor(maestro) y admin
-    Route::middleware(('role:supervisor|admin'))->group(function (){
+    Route::middleware(('role:supervisor|admin'))->group(function () {
         Route::get('/competidor-edit/{id?}', CompetidorEdit::class)->name('competidor-edit');
     });
 
@@ -109,7 +188,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::group([
     'prefix' => '/clasificaciones',
     'as' => 'clasificaciones.'
-], function(){
+], function () {
     Route::get('/', [ClasificacionesController::class, 'index'])->name('index');
 });
 
